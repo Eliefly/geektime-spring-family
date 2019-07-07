@@ -5,36 +5,52 @@
 
 <generatorConfiguration>
     <context id="H2Tables" targetRuntime="MyBatis3">
-        <plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin" />
-        <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
-        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin" />
+        <!--一些内置的插件生成额外的方法，需按顺序配置-->
+        <plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
 
+        <!--注释配置-->
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+
+        <!--数据库链接属性-->
         <jdbcConnection driverClass="org.h2.Driver"
                         connectionURL="jdbc:h2:mem:testdb"
                         userId="sa"
                         password="">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="geektime.spring.data.mybatis.model"
+
+        <!--POJO 生成位置-->
+        <javaModelGenerator targetPackage="geektime.spring.data.mybatis.domain"
                             targetProject="./src/main/java">
-            <property name="enableSubPackages" value="true" />
-            <property name="trimStrings" value="true" />
+            <property name="enableSubPackages" value="true"/>
+            <!-- 从数据库返回的值被清理前后的空格 -->
+            <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="geektime.spring.data.mybatis.mapper"
+        <!--SQL Map XML 生成位置-->
+        <sqlMapGenerator targetPackage="geektime.spring.data.mybatis.mapper.generated"
                          targetProject="./src/main/resources/mapper">
-            <property name="enableSubPackages" value="true" />
+            <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
+        <!--Mapper 接口生成位置-->
         <javaClientGenerator type="MIXEDMAPPER"
-                             targetPackage="geektime.spring.data.mybatis.mapper"
+                             targetPackage="geektime.spring.data.mybatis.mapper.generated"
                              targetProject="./src/main/java">
-            <property name="enableSubPackages" value="true" />
+            <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-        <table tableName="t_coffee" domainObjectName="Coffee" >
-            <generatedKey column="id" sqlStatement="CALL IDENTITY()" identity="true" />
+        <!--数据库表-->
+        <table tableName="t_coffee" domainObjectName="Coffee">
+            <generatedKey column="id" sqlStatement="CALL IDENTITY()" identity="true"/>
+            <!--字段类型转换-->
             <columnOverride column="price" javaType="org.joda.money.Money" jdbcType="BIGINT"
                             typeHandler="geektime.spring.data.mybatis.handler.MoneyTypeHandler"/>
         </table>
