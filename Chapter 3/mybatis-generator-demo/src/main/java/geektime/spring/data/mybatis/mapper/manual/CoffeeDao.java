@@ -11,6 +11,5 @@ import org.apache.ibatis.annotations.Param;
  * @date 2019-07-07
  */
 public interface CoffeeDao extends CoffeeMapper {
-
     Coffee findByName(@Param("name") String name);
 }

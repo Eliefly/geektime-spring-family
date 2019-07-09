@@ -18,32 +18,32 @@ import java.util.List;
 @Slf4j
 @MapperScan("geektime.spring.data.mybatisdemo.mapper")
 public class MybatisDemoApplication implements ApplicationRunner {
-	@Autowired
-	private CoffeeMapper coffeeMapper;
+    @Autowired
+    private CoffeeMapper coffeeMapper;
 
-	public static void main(String[] args) {
-		SpringApplication.run(MybatisDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MybatisDemoApplication.class, args);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		coffeeMapper.findAllWithRowBounds(new RowBounds(1, 3))
-				.forEach(c -> log.info("Page(1) Coffee {}", c));
-		coffeeMapper.findAllWithRowBounds(new RowBounds(2, 3))
-				.forEach(c -> log.info("Page(2) Coffee {}", c));
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        coffeeMapper.findAllWithRowBounds(new RowBounds(1, 3))
+                .forEach(c -> log.info("Page(1) Coffee {}", c));
+        coffeeMapper.findAllWithRowBounds(new RowBounds(2, 3))
+                .forEach(c -> log.info("Page(2) Coffee {}", c));
 
-		log.info("===================");
+        log.info("===================");
 
-		coffeeMapper.findAllWithRowBounds(new RowBounds(1, 0))
-				.forEach(c -> log.info("Page(1) Coffee {}", c));
+        coffeeMapper.findAllWithRowBounds(new RowBounds(1, 0))
+                .forEach(c -> log.info("Page(1) Coffee {}", c));
 
-		log.info("===================");
+        log.info("===================");
 
-		coffeeMapper.findAllWithParam(1, 3)
-				.forEach(c -> log.info("Page(1) Coffee {}", c));
-		List<Coffee> list = coffeeMapper.findAllWithParam(2, 3);
-		PageInfo page = new PageInfo(list);
-		log.info("PageInfo: {}", page);
-	}
+        coffeeMapper.findAllWithParam(1, 3)
+                .forEach(c -> log.info("Page(1) Coffee {}", c));
+        List<Coffee> list = coffeeMapper.findAllWithParam(2, 3);
+        PageInfo page = new PageInfo(list);
+        log.info("PageInfo: {}", page);
+    }
 }
 
