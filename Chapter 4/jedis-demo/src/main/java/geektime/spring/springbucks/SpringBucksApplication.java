@@ -25,46 +25,43 @@ import java.util.Map;
 @SpringBootApplication
 @EnableJpaRepositories
 public class SpringBucksApplication implements ApplicationRunner {
-	@Autowired
-	private CoffeeService coffeeService;
-	@Autowired
-	private JedisPool jedisPool;
-	@Autowired
-	private JedisPoolConfig jedisPoolConfig;
+    @Autowired
+    private CoffeeService coffeeService;
+    @Autowired
+    private JedisPool jedisPool;
+    @Autowired
+    private JedisPoolConfig jedisPoolConfig;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBucksApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBucksApplication.class, args);
+    }
 
-	@Bean
-	@ConfigurationProperties("redis")
-	public JedisPoolConfig jedisPoolConfig() {
-		return new JedisPoolConfig();
-	}
+    @Bean
+    @ConfigurationProperties("redis")
+    public JedisPoolConfig jedisPoolConfig() {
+        return new JedisPoolConfig();
+    }
 
-	@Bean(destroyMethod = "close")
-	public JedisPool jedisPool(@Value("${redis.host}") String host) {
-		return new JedisPool(jedisPoolConfig(), host);
-	}
+    @Bean(destroyMethod = "close")
+    public JedisPool jedisPool(@Value("${redis.host}") String host) {
+        return new JedisPool(jedisPoolConfig(), host);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		log.info(jedisPoolConfig.toString());
+    @Override
+    public void run(ApplicationArguments args) {
+        log.info(jedisPoolConfig.toString());
 
-		try (Jedis jedis = jedisPool.getResource()) {
-			coffeeService.findAllCoffee().forEach(c -> {
-				jedis.hset("springbucks-menu",
-						c.getName(),
-						Long.toString(c.getPrice().getAmountMinorLong()));
-			});
+        try (Jedis jedis = jedisPool.getResource()) {
+            coffeeService.findAllCoffee().forEach(coffee -> jedis.hset("springbucks-menu",
+                    coffee.getName(), Long.toString(coffee.getPrice().getAmountMinorLong())));
 
-			Map<String, String> menu = jedis.hgetAll("springbucks-menu");
-			log.info("Menu: {}", menu);
+            Map<String, String> menu = jedis.hgetAll("springbucks-menu");
+            log.info("Menu: {}", menu);
 
-			String price = jedis.hget("springbucks-menu", "espresso");
-			log.info("espresso - {}",
-					Money.ofMinor(CurrencyUnit.of("CNY"), Long.parseLong(price)));
-		}
-	}
+            String price = jedis.hget("springbucks-menu", "espresso");
+            log.info("espresso - {}",
+                    Money.ofMinor(CurrencyUnit.of("CNY"), Long.parseLong(price)));
+        }
+    }
 }
 

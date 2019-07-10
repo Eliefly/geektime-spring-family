@@ -22,43 +22,43 @@ import java.util.Date;
 @SpringBootApplication
 @EnableMongoRepositories
 public class MongoRepositoryDemoApplication implements CommandLineRunner {
-	@Autowired
-	private CoffeeRepository coffeeRepository;
+    @Autowired
+    private CoffeeRepository coffeeRepository;
 
-	public static void main(String[] args) {
-		SpringApplication.run(MongoRepositoryDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MongoRepositoryDemoApplication.class, args);
+    }
 
-	@Bean
-	public MongoCustomConversions mongoCustomConversions() {
-		return new MongoCustomConversions(Arrays.asList(new MoneyReadConverter()));
-	}
+    @Bean
+    public MongoCustomConversions mongoCustomConversions() {
+        return new MongoCustomConversions(Arrays.asList(new MoneyReadConverter()));
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		Coffee espresso = Coffee.builder()
-				.name("espresso")
-				.price(Money.of(CurrencyUnit.of("CNY"), 20.0))
-				.createTime(new Date())
-				.updateTime(new Date()).build();
-		Coffee latte = Coffee.builder()
-				.name("latte")
-				.price(Money.of(CurrencyUnit.of("CNY"), 30.0))
-				.createTime(new Date())
-				.updateTime(new Date()).build();
+    @Override
+    public void run(String... args) throws Exception {
+        Coffee espresso = Coffee.builder()
+                .name("espresso")
+                .price(Money.of(CurrencyUnit.of("CNY"), 20.0))
+                .createTime(new Date())
+                .updateTime(new Date()).build();
+        Coffee latte = Coffee.builder()
+                .name("latte")
+                .price(Money.of(CurrencyUnit.of("CNY"), 30.0))
+                .createTime(new Date())
+                .updateTime(new Date()).build();
 
-		coffeeRepository.insert(Arrays.asList(espresso, latte));
-		coffeeRepository.findAll(Sort.by("name"))
-				.forEach(c -> log.info("Saved Coffee {}", c));
+        coffeeRepository.insert(Arrays.asList(espresso, latte));
+        coffeeRepository.findAll(Sort.by("name"))
+                .forEach(c -> log.info("Saved Coffee {}", c));
 
-		Thread.sleep(1000);
-		latte.setPrice(Money.of(CurrencyUnit.of("CNY"), 35.0));
-		latte.setUpdateTime(new Date());
-		coffeeRepository.save(latte);
-		coffeeRepository.findByName("latte")
-				.forEach(c -> log.info("Coffee {}", c));
+        Thread.sleep(1000);
+        latte.setPrice(Money.of(CurrencyUnit.of("CNY"), 35.0));
+        latte.setUpdateTime(new Date());
+        coffeeRepository.save(latte);
+        coffeeRepository.findByName("latte")
+                .forEach(c -> log.info("Coffee {}", c));
 
-		coffeeRepository.deleteAll();
-	}
+        coffeeRepository.deleteAll();
+    }
 }
 

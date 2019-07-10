@@ -15,25 +15,26 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @SpringBootApplication
 @EnableJpaRepositories
+// 缓存开启
 @EnableCaching(proxyTargetClass = true)
 public class SpringBucksApplication implements ApplicationRunner {
-	@Autowired
-	private CoffeeService coffeeService;
+    @Autowired
+    private CoffeeService coffeeService;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBucksApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBucksApplication.class, args);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		log.info("Count: {}", coffeeService.findAllCoffee().size());
-		for (int i = 0; i < 10; i++) {
-			log.info("Reading from cache.");
-			coffeeService.findAllCoffee();
-		}
-		coffeeService.reloadCoffee();
-		log.info("Reading after refresh.");
-		coffeeService.findAllCoffee().forEach(c -> log.info("Coffee {}", c.getName()));
-	}
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        log.info("Count: {}", coffeeService.findAllCoffee().size());
+        for (int i = 0; i < 10; i++) {
+            log.info("Reading from cache.");
+            coffeeService.findAllCoffee();
+        }
+        coffeeService.reloadCoffee();
+        log.info("Reading after refresh.");
+        coffeeService.findAllCoffee().forEach(c -> log.info("Coffee {}", c.getName()));
+    }
 }
 
