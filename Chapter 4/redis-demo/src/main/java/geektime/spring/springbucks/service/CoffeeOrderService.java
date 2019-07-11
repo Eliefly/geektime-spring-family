@@ -19,12 +19,16 @@ public class CoffeeOrderService {
     @Autowired
     private CoffeeOrderRepository orderRepository;
 
-    public CoffeeOrder createOrder(String customer, Coffee...coffee) {
-        CoffeeOrder order = CoffeeOrder.builder()
-                .customer(customer)
-                .items(new ArrayList<>(Arrays.asList(coffee)))
-                .state(OrderState.INIT)
-                .build();
+    public CoffeeOrder createOrder(String customer, Coffee... coffee) {
+//        CoffeeOrder order = CoffeeOrder.builder()
+//                .customer(customer)
+//                .items(new ArrayList<>(Arrays.asList(coffee)))
+//                .state(OrderState.INIT)
+//                .build();
+        CoffeeOrder order = new CoffeeOrder()
+                .setCustomer(customer)
+                .setItems(new ArrayList<>(Arrays.asList(coffee)))
+                .setState(OrderState.INIT);
         CoffeeOrder saved = orderRepository.save(order);
         log.info("New Order: {}", saved);
         return saved;

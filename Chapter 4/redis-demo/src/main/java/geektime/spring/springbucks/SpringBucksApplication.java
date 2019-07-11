@@ -16,7 +16,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.net.UnknownHostException;
 import java.util.Optional;
 
 @Slf4j
@@ -24,35 +23,35 @@ import java.util.Optional;
 @SpringBootApplication
 @EnableJpaRepositories
 public class SpringBucksApplication implements ApplicationRunner {
-	@Autowired
-	private CoffeeService coffeeService;
+    @Autowired
+    private CoffeeService coffeeService;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBucksApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBucksApplication.class, args);
+    }
 
-	@Bean
-	public RedisTemplate<String, Coffee> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		RedisTemplate<String, Coffee> template = new RedisTemplate<>();
-		template.setConnectionFactory(redisConnectionFactory);
-		return template;
-	}
+    @Bean
+    public RedisTemplate<String, Coffee> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Coffee> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
 
-	@Bean
-	public LettuceClientConfigurationBuilderCustomizer customizer() {
-		return builder -> builder.readFrom(ReadFrom.MASTER_PREFERRED);
-	}
+    @Bean
+    public LettuceClientConfigurationBuilderCustomizer customizer() {
+        return builder -> builder.readFrom(ReadFrom.MASTER_PREFERRED);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		Optional<Coffee> c = coffeeService.findOneCoffee("mocha");
-		log.info("Coffee {}", c);
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        Optional<Coffee> c = coffeeService.findOneCoffee("mocha");
+        log.info("Coffee {}", c);
 
-		for (int i = 0; i < 5; i++) {
-			c = coffeeService.findOneCoffee("mocha");
-		}
+        for (int i = 0; i < 5; i++) {
+            c = coffeeService.findOneCoffee("mocha");
+        }
 
-		log.info("Value from Redis: {}", c);
-	}
+        log.info("Value from Redis: {}", c);
+    }
 }
 
