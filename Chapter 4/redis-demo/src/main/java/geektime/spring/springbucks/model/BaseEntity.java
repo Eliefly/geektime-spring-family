@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @MappedSuperclass
+// 替换 @Builder
 @Accessors(chain = true)
 @Data
 @NoArgsConstructor

@@ -14,32 +14,32 @@ import java.sql.SQLException;
 @SpringBootApplication
 @Slf4j
 public class DataSourceDemoApplication implements CommandLineRunner {
-	@Autowired
-	private DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-	public static void main(String[] args) {
-		SpringApplication.run(DataSourceDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DataSourceDemoApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		showConnection();
-		showData();
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        showConnection();
+        showData();
+    }
 
-	private void showConnection() throws SQLException {
-		log.info(dataSource.toString());
-		Connection conn = dataSource.getConnection();
-		log.info(conn.toString());
-		conn.close();
-	}
+    private void showConnection() throws SQLException {
+        log.info(dataSource.toString());
+        Connection conn = dataSource.getConnection();
+        log.info(conn.toString());
+        conn.close();
+    }
 
-	private void showData() {
-		jdbcTemplate.queryForList("SELECT * FROM FOO")
-				.forEach(row -> log.info(row.toString()));
-	}
+    private void showData() {
+        jdbcTemplate.queryForList("SELECT * FROM FOO")
+                .forEach(row -> log.info(row.toString()));
+    }
 }
 

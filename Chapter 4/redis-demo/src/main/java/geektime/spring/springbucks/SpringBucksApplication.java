@@ -39,6 +39,7 @@ public class SpringBucksApplication implements ApplicationRunner {
 
     @Bean
     public LettuceClientConfigurationBuilderCustomizer customizer() {
+        // 优先从master读
         return builder -> builder.readFrom(ReadFrom.MASTER_PREFERRED);
     }
 

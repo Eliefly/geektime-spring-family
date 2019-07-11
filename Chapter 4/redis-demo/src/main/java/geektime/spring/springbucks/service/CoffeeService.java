@@ -30,11 +30,15 @@ public class CoffeeService {
     }
 
     public Optional<Coffee> findOneCoffee(String name) {
+
+        // 先判断redis中是否有
         HashOperations<String, String, Coffee> hashOperations = redisTemplate.opsForHash();
         if (redisTemplate.hasKey(CACHE) && hashOperations.hasKey(CACHE, name)) {
             log.info("Get coffee {} from Redis.", name);
             return Optional.of(hashOperations.get(CACHE, name));
         }
+
+        // 如果没有就从数据取
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("name", exact().ignoreCase());
         Optional<Coffee> coffee = coffeeRepository.findOne(
@@ -42,6 +46,7 @@ public class CoffeeService {
         log.info("Coffee Found: {}", coffee);
         if (coffee.isPresent()) {
             log.info("Put coffee {} to Redis.", name);
+            // 放入redis
             hashOperations.put(CACHE, name, coffee.get());
             redisTemplate.expire(CACHE, 1, TimeUnit.MINUTES);
         }
