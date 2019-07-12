@@ -13,36 +13,36 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(mode = AdviceMode.PROXY)
 @Slf4j
 public class DeclarativeTransactionDemoApplication implements CommandLineRunner {
-	@Autowired
-	private FooService fooService;
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private FooService fooService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-	public static void main(String[] args) {
-		SpringApplication.run(DeclarativeTransactionDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DeclarativeTransactionDemoApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		fooService.insertRecord();
-		log.info("AAA {}",
-				jdbcTemplate
-						.queryForObject("SELECT COUNT(*) FROM FOO WHERE BAR='AAA'", Long.class));
-		try {
-			fooService.insertThenRollback();
-		} catch (Exception e) {
-			log.info("BBB {}",
-					jdbcTemplate
-							.queryForObject("SELECT COUNT(*) FROM FOO WHERE BAR='BBB'", Long.class));
-		}
+    @Override
+    public void run(String... args) throws Exception {
+        fooService.insertRecord();
+        log.info("AAA {}",
+                jdbcTemplate
+                        .queryForObject("SELECT COUNT(*) FROM FOO WHERE BAR='AAA'", Long.class));
+        try {
+            fooService.insertThenRollback();
+        } catch (Exception e) {
+            log.info("BBB {}",
+                    jdbcTemplate
+                            .queryForObject("SELECT COUNT(*) FROM FOO WHERE BAR='BBB'", Long.class));
+        }
 
-		try {
-			fooService.invokeInsertThenRollback();
-		} catch (Exception e) {
-			log.info("BBB {}",
-					jdbcTemplate
-							.queryForObject("SELECT COUNT(*) FROM FOO WHERE BAR='BBB'", Long.class));
-		}
-	}
+        try {
+            fooService.invokeInsertThenRollback();
+        } catch (Exception e) {
+            log.info("BBB {}",
+                    jdbcTemplate
+                            .queryForObject("SELECT COUNT(*) FROM FOO WHERE BAR='BBB'", Long.class));
+        }
+    }
 }
 

@@ -12,18 +12,18 @@ import javax.sql.DataSource;
 @SpringBootApplication
 @Slf4j
 public class DruidDemoApplication implements CommandLineRunner {
-	@Autowired
-	private DataSource dataSource;
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-	public static void main(String[] args) {
-		SpringApplication.run(DruidDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DruidDemoApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		log.info(dataSource.toString());
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        log.info(dataSource.toString());
+    }
 }
 

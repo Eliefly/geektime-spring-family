@@ -33,8 +33,7 @@ public class FooDao {
     }
 
     public void listData() {
-        log.info("Count: {}",
-                jdbcTemplate.queryForObject("SELECT COUNT(*) FROM FOO", Long.class));
+        log.info("Count: {}", jdbcTemplate.queryForObject("SELECT COUNT(*) FROM FOO", Long.class));
 
         List<String> list = jdbcTemplate.queryForList("SELECT BAR FROM FOO", String.class);
         list.forEach(s -> log.info("Bar: {}", s));
