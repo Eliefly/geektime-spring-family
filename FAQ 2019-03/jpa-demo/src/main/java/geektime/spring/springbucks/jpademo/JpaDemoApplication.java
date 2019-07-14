@@ -20,42 +20,42 @@ import java.util.Arrays;
 @EnableJpaRepositories
 @Slf4j
 public class JpaDemoApplication implements ApplicationRunner {
-	@Autowired
-	private CoffeeRepository coffeeRepository;
-	@Autowired
-	private CoffeeOrderRepository orderRepository;
+    @Autowired
+    private CoffeeRepository coffeeRepository;
+    @Autowired
+    private CoffeeOrderRepository orderRepository;
 
-	public static void main(String[] args) {
-		SpringApplication.run(JpaDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(JpaDemoApplication.class, args);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		initOrders();
-	}
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        initOrders();
+    }
 
-	private void initOrders() {
-		Coffee espresso = Coffee.builder().name("espresso")
-				.price(Money.of(CurrencyUnit.of("CNY"), 20.0))
-				.build();
-		coffeeRepository.save(espresso);
-		log.info("Coffee: {}", espresso);
+    private void initOrders() {
+        Coffee espresso = Coffee.builder().name("espresso")
+                .price(Money.of(CurrencyUnit.of("CNY"), 20.0))
+                .build();
+        coffeeRepository.save(espresso);
+        log.info("Coffee: {}", espresso);
 
-		Coffee latte = Coffee.builder().name("latte")
-				.price(Money.of(CurrencyUnit.of("CNY"), 30.0))
-				.build();
-		coffeeRepository.save(latte);
-		log.info("Coffee: {}", latte);
+        Coffee latte = Coffee.builder().name("latte")
+                .price(Money.of(CurrencyUnit.of("CNY"), 30.0))
+                .build();
+        coffeeRepository.save(latte);
+        log.info("Coffee: {}", latte);
 
-		log.info("Total Coffee: {}", coffeeRepository.count());
+        log.info("Total Coffee: {}", coffeeRepository.count());
 
-		CoffeeOrder order = CoffeeOrder.builder()
-				.customer("Li Lei")
-				.items(Arrays.asList(espresso, latte))
-				.state(0)
-				.build();
-		orderRepository.save(order);
-		log.info("Order: {}", order);
-	}
+        CoffeeOrder order = CoffeeOrder.builder()
+                .customer("Li Lei")
+                .items(Arrays.asList(espresso, latte))
+                .state(0)
+                .build();
+        orderRepository.save(order);
+        log.info("Order: {}", order);
+    }
 }
 

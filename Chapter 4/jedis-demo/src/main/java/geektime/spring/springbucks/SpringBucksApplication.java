@@ -42,6 +42,12 @@ public class SpringBucksApplication implements ApplicationRunner {
         return new JedisPoolConfig();
     }
 
+    /**
+     * 没有使用自动配置，自定的reids连接配置
+     *
+     * @param host
+     * @return
+     */
     @Bean(destroyMethod = "close")
     public JedisPool jedisPool(@Value("${redis.host}") String host) {
         return new JedisPool(jedisPoolConfig(), host);
@@ -51,6 +57,7 @@ public class SpringBucksApplication implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         log.info(jedisPoolConfig.toString());
 
+        // 从 jedisPool 获取 jedis 连接进行操作
         try (Jedis jedis = jedisPool.getResource()) {
             coffeeService.findAllCoffee().forEach(coffee -> jedis.hset("springbucks-menu",
                     coffee.getName(), Long.toString(coffee.getPrice().getAmountMinorLong())));

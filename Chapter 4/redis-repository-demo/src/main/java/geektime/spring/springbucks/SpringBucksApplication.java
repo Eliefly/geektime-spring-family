@@ -25,36 +25,40 @@ import java.util.Optional;
 @EnableTransactionManagement
 @SpringBootApplication
 @EnableJpaRepositories
+// 启用 redis repository 支持
 @EnableRedisRepositories
 public class SpringBucksApplication implements ApplicationRunner {
-	@Autowired
-	private CoffeeService coffeeService;
+    @Autowired
+    private CoffeeService coffeeService;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBucksApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBucksApplication.class, args);
+    }
 
-	@Bean
-	public LettuceClientConfigurationBuilderCustomizer customizer() {
-		return builder -> builder.readFrom(ReadFrom.MASTER_PREFERRED);
-	}
+    @Bean
+    public LettuceClientConfigurationBuilderCustomizer customizer() {
+        return builder -> builder.readFrom(ReadFrom.MASTER_PREFERRED);
+    }
 
-	@Bean
-	public RedisCustomConversions redisCustomConversions() {
-		return new RedisCustomConversions(
-				Arrays.asList(new MoneyToBytesConverter(), new BytesToMoneyConverter()));
-	}
+    /**
+     * 自定义 redis 类型转换，RedisRepositoryConfigurationExtension register coustom conversions
+     */
+    @Bean
+    public RedisCustomConversions redisCustomConversions() {
+        return new RedisCustomConversions(
+                Arrays.asList(new MoneyToBytesConverter(), new BytesToMoneyConverter()));
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		Optional<Coffee> c = coffeeService.findSimpleCoffeeFromCache("mocha");
-		log.info("Coffee {}", c);
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        Optional<Coffee> c = coffeeService.findSimpleCoffeeFromCache("mocha");
+        log.info("Coffee {}", c);
 
-		for (int i = 0; i < 5; i++) {
-			c = coffeeService.findSimpleCoffeeFromCache("mocha");
-		}
+        for (int i = 0; i < 5; i++) {
+            c = coffeeService.findSimpleCoffeeFromCache("mocha");
+        }
 
-		log.info("Value from Redis: {}", c);
-	}
+        log.info("Value from Redis: {}", c);
+    }
 }
 

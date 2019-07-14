@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
+// redis repository
 @RedisHash(value = "springbucks-coffee", timeToLive = 60)
 @Data
 @NoArgsConstructor
@@ -17,6 +18,7 @@ import org.springframework.data.redis.core.index.Indexed;
 public class CoffeeCache {
     @Id
     private Long id;
+    // name 字段 redis 二级索引
     @Indexed
     private String name;
     private Money price;

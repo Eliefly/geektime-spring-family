@@ -20,6 +20,11 @@ public class CoffeeController {
     @Autowired
     private CoffeeService coffeeService;
 
+    /**
+     * 根路径不带参数
+     *
+     * @return
+     */
     @GetMapping(path = "/", params = "!name")
     @ResponseBody
     public List<Coffee> getAll() {
@@ -30,10 +35,15 @@ public class CoffeeController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public Coffee getById(@PathVariable Long id) {
-        Coffee coffee = coffeeService.getCoffee(id);
-        return coffee;
+        return coffeeService.getCoffee(id);
     }
 
+    /**
+     * 根路径带参数
+     *
+     * @param name
+     * @return
+     */
     @GetMapping(path = "/", params = "name")
     @ResponseBody
     public Coffee getByName(@RequestParam String name) {

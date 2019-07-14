@@ -33,6 +33,12 @@ public class RedisDemoApplication implements ApplicationRunner {
         SpringApplication.run(RedisDemoApplication.class, args);
     }
 
+    /**
+     * reactiveRedisTemplate
+     *
+     * @param factory
+     * @return
+     */
     @Bean
     ReactiveStringRedisTemplate reactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
         return new ReactiveStringRedisTemplate(factory);
@@ -45,11 +51,11 @@ public class RedisDemoApplication implements ApplicationRunner {
 
         List<Coffee> list = jdbcTemplate.query(
                 "select * from t_coffee", (rs, i) ->
-                Coffee.builder()
-                        .id(rs.getLong("id"))
-                        .name(rs.getString("name"))
-                        .price(rs.getLong("price"))
-                        .build()
+                        Coffee.builder()
+                                .id(rs.getLong("id"))
+                                .name(rs.getString("name"))
+                                .price(rs.getLong("price"))
+                                .build()
         );
 
         Flux.fromIterable(list)

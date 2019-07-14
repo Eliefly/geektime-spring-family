@@ -5,6 +5,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
+/**
+ * redis repository
+ */
 public interface CoffeeCacheRepository extends CrudRepository<CoffeeCache, Long> {
     Optional<CoffeeCache> findOneByName(String name);
 }

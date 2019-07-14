@@ -37,7 +37,7 @@ public class CoffeeOrderController {
     public CoffeeOrder create(@RequestBody NewOrderRequest newOrder) {
         log.info("Receive new Order {}", newOrder);
         Coffee[] coffeeList = coffeeService.getCoffeeByName(newOrder.getItems())
-                .toArray(new Coffee[] {});
+                .toArray(new Coffee[]{});
         return orderService.createOrder(newOrder.getCustomer(), coffeeList);
     }
 }

@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -54,12 +51,13 @@ public class CoffeeController {
         return coffeeService.saveCoffee(newCoffee.getName(), newCoffee.getPrice());
     }
 
-//    @PostMapping(path = "/", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-//    @ResponseBody
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public Coffee addCoffeeWithoutBindingResult(@Valid NewCoffeeRequest newCoffee) {
-//        return coffeeService.saveCoffee(newCoffee.getName(), newCoffee.getPrice());
-//    }
+    // 如果consumes是json，怎么写json参数？
+    @PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
+    public Coffee addCoffeeWithoutBindingResult(@Valid NewCoffeeRequest newCoffee) {
+        return coffeeService.saveCoffee(newCoffee.getName(), newCoffee.getPrice());
+    }
 
     @PostMapping(path = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
@@ -95,12 +93,10 @@ public class CoffeeController {
         return coffeeService.getAllCoffee();
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(path = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public Coffee getById(@PathVariable Long id) {
-        Coffee coffee = coffeeService.getCoffee(id);
-        return coffee;
+        return coffeeService.getCoffee(id);
     }
 
     @GetMapping(path = "/", params = "name")

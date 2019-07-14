@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class PerformanceAspect {
-//    @Around("execution(* geektime.spring.springbucks.repository..*(..))")
+    //    @Around("execution(* geektime.spring.springbucks.repository..*(..))")
     @Around("repositoryOps()")
     public Object logPerformance(ProceedingJoinPoint pjp) throws Throwable {
         long startTime = System.currentTimeMillis();

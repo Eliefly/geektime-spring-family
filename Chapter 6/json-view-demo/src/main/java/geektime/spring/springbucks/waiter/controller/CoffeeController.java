@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,10 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -55,6 +51,7 @@ public class CoffeeController {
 //        return coffeeService.saveCoffee(newCoffee.getName(), newCoffee.getPrice());
 //    }
 
+    // 表单参数
     @PostMapping(path = "/", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
@@ -62,6 +59,7 @@ public class CoffeeController {
         return coffeeService.saveCoffee(newCoffee.getName(), newCoffee.getPrice());
     }
 
+    // json 参数
     @PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
