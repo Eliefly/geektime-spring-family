@@ -1,6 +1,6 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/aop
@@ -12,5 +12,5 @@
         <constructor-arg name="context" value="childX"/>
     </bean>
 
-    <!--<bean id="fooAspect" class="geektime.spring.web.foo.FooAspect"/>-->
+    <bean id="fooAspect" class="geektime.spring.web.foo.FooAspect"/>
 </beans>
