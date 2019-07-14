@@ -14,24 +14,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @Slf4j
 public class ContextHierarchyDemoApplication implements ApplicationRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ContextHierarchyDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ContextHierarchyDemoApplication.class, args);
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		ApplicationContext fooContext = new AnnotationConfigApplicationContext(FooConfig.class);
-		ClassPathXmlApplicationContext barContext = new ClassPathXmlApplicationContext(
-				new String[] {"applicationContext.xml"}, fooContext);
-		TestBean bean = fooContext.getBean("testBeanX", TestBean.class);
-		bean.hello();
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        // parent context
+        ApplicationContext fooContext = new AnnotationConfigApplicationContext(FooConfig.class);
 
-		log.info("=============");
+        // child context
+        ClassPathXmlApplicationContext barContext = new ClassPathXmlApplicationContext(
+                new String[]{"applicationContext.xml"}, fooContext);
 
-		bean = barContext.getBean("testBeanX", TestBean.class);
-		bean.hello();
+        TestBean bean = fooContext.getBean("testBeanX", TestBean.class);
+        bean.hello();
 
-		bean = barContext.getBean("testBeanY", TestBean.class);
-		bean.hello();
-	}
+        log.info("=============");
+
+        bean = barContext.getBean("testBeanX", TestBean.class);
+        bean.hello();
+
+        bean = barContext.getBean("testBeanY", TestBean.class);
+        bean.hello();
+    }
 }
