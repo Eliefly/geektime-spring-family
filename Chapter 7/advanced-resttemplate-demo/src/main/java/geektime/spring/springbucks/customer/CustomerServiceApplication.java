@@ -34,75 +34,84 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 @Slf4j
 public class CustomerServiceApplication implements ApplicationRunner {
-	@Autowired
-	private RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
-	public static void main(String[] args) {
-		new SpringApplicationBuilder()
-				.sources(CustomerServiceApplication.class)
-				.bannerMode(Banner.Mode.OFF)
-				.web(WebApplicationType.NONE)
-				.run(args);
-	}
+    public static void main(String[] args) {
+        new SpringApplicationBuilder()
+                .sources(CustomerServiceApplication.class)
+                .bannerMode(Banner.Mode.OFF)
+                .web(WebApplicationType.NONE)
+                .run(args);
+    }
 
-	@Bean
-	public HttpComponentsClientHttpRequestFactory requestFactory() {
-		PoolingHttpClientConnectionManager connectionManager =
-				new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
-		connectionManager.setMaxTotal(200);
-		connectionManager.setDefaultMaxPerRoute(20);
+    /**
+     * HttpComponentsClientHttpRequestFactory 自定配置，更多配置详情可访问 Apache HttpComponents 官网
+     *
+     * @return
+     */
+    @Bean
+    public HttpComponentsClientHttpRequestFactory requestFactory() {
+        // 自定httpclient连接池，ttl设置为30秒
+        PoolingHttpClientConnectionManager connectionManager =
+                new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
+        // 最大200个连接
+        connectionManager.setMaxTotal(200);
+        // 每个route最大20个连接
+        connectionManager.setDefaultMaxPerRoute(20);
 
-		CloseableHttpClient httpClient = HttpClients.custom()
-				.setConnectionManager(connectionManager)
-				.evictIdleConnections(30, TimeUnit.SECONDS)
-				.disableAutomaticRetries()
-				// 有 Keep-Alive 认里面的值，没有的话永久有效
-				//.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-				// 换成自定义的
-				.setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
-				.build();
+        // 定制一个httpclient
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                // 空闲连接30秒关闭
+                .evictIdleConnections(30, TimeUnit.SECONDS)
+                // 关掉自动重试（比如支付场景就不需要自动重试，另一方面下层做幂等）
+                .disableAutomaticRetries()
+                // 有 Keep-Alive 认里面的值，没有的话永久有效
+                //.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
+                // 换成自定义的keeplive策略，默认的是 DefaultConnectionKeepAliveStrategy
+                .setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
+                .build();
+        return new HttpComponentsClientHttpRequestFactory(httpClient);
+    }
 
-		HttpComponentsClientHttpRequestFactory requestFactory =
-				new HttpComponentsClientHttpRequestFactory(httpClient);
-
-		return requestFactory;
-	}
-
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
 //		return new RestTemplate();
+        return builder
+                // 配置连接的超时时间
+                .setConnectTimeout(Duration.ofMillis(100))
+                .setReadTimeout(Duration.ofMillis(500))
+                // 使用自定义的httpclient factory 配置 restTemplate
+                .requestFactory(this::requestFactory)
+                .build();
+    }
 
-		return builder
-				.setConnectTimeout(Duration.ofMillis(100))
-				.setReadTimeout(Duration.ofMillis(500))
-				.requestFactory(this::requestFactory)
-				.build();
-	}
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        URI uri = UriComponentsBuilder
+                .fromUriString("http://localhost:8080/coffee/?name={name}")
+                .build("mocha");
+        RequestEntity<Void> req = RequestEntity.get(uri)
+                .accept(MediaType.APPLICATION_XML)
+                .build();
+        ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
+        log.info("Response Status: {}, Response Headers: {}", resp.getStatusCode(), resp.getHeaders().toString());
+        log.info("Coffee: {}", resp.getBody());
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		URI uri = UriComponentsBuilder
-				.fromUriString("http://localhost:8080/coffee/?name={name}")
-				.build("mocha");
-		RequestEntity<Void> req = RequestEntity.get(uri)
-				.accept(MediaType.APPLICATION_XML)
-				.build();
-		ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
-		log.info("Response Status: {}, Response Headers: {}", resp.getStatusCode(), resp.getHeaders().toString());
-		log.info("Coffee: {}", resp.getBody());
+        String coffeeUri = "http://localhost:8080/coffee/";
+        Coffee request = Coffee.builder()
+                .name("Americano")
+                .price(Money.of(CurrencyUnit.of("CNY"), 25.00))
+                .build();
+        Coffee response = restTemplate.postForObject(coffeeUri, request, Coffee.class);
+        log.info("New Coffee: {}", response);
 
-		String coffeeUri = "http://localhost:8080/coffee/";
-		Coffee request = Coffee.builder()
-				.name("Americano")
-				.price(Money.of(CurrencyUnit.of("CNY"), 25.00))
-				.build();
-		Coffee response = restTemplate.postForObject(coffeeUri, request, Coffee.class);
-		log.info("New Coffee: {}", response);
-
-		ParameterizedTypeReference<List<Coffee>> ptr =
-				new ParameterizedTypeReference<List<Coffee>>() {};
-		ResponseEntity<List<Coffee>> list = restTemplate
-				.exchange(coffeeUri, HttpMethod.GET, null, ptr);
-		list.getBody().forEach(c -> log.info("Coffee: {}", c));
-	}
+        ParameterizedTypeReference<List<Coffee>> ptr =
+                new ParameterizedTypeReference<List<Coffee>>() {
+                };
+        ResponseEntity<List<Coffee>> list = restTemplate
+                .exchange(coffeeUri, HttpMethod.GET, null, ptr);
+        list.getBody().forEach(c -> log.info("Coffee: {}", c));
+    }
 }

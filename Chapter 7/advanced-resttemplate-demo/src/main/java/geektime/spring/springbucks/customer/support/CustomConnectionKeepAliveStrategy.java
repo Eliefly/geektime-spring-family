@@ -14,8 +14,7 @@ public class CustomConnectionKeepAliveStrategy implements ConnectionKeepAliveStr
 
     @Override
     public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-        return Arrays.asList(response.getHeaders(HTTP.CONN_KEEP_ALIVE))
-                .stream()
+        return Arrays.stream(response.getHeaders(HTTP.CONN_KEEP_ALIVE))
                 .filter(h -> StringUtils.equalsIgnoreCase(h.getName(), "timeout")
                         && StringUtils.isNumeric(h.getValue()))
                 .findFirst()
