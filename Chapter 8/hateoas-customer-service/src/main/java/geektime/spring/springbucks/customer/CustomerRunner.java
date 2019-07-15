@@ -32,7 +32,7 @@ public class CustomerRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Link coffeeLink = getLink(ROOT_URI,"coffees");
+        Link coffeeLink = getLink(ROOT_URI, "coffees");
         readCoffeeMenu(coffeeLink);
         Resource<Coffee> americano = addCoffee(coffeeLink);
 
@@ -44,7 +44,8 @@ public class CustomerRunner implements ApplicationRunner {
     private Link getLink(URI uri, String rel) {
         ResponseEntity<Resources<Link>> rootResp =
                 restTemplate.exchange(uri, HttpMethod.GET, null,
-                        new ParameterizedTypeReference<Resources<Link>>() {});
+                        new ParameterizedTypeReference<Resources<Link>>() {
+                        });
         Link link = rootResp.getBody().getLink(rel);
         log.info("Link: {}", link);
         return link;
@@ -54,7 +55,8 @@ public class CustomerRunner implements ApplicationRunner {
         ResponseEntity<PagedResources<Resource<Coffee>>> coffeeResp =
                 restTemplate.exchange(coffeeLink.getTemplate().expand(),
                         HttpMethod.GET, null,
-                        new ParameterizedTypeReference<PagedResources<Resource<Coffee>>>() {});
+                        new ParameterizedTypeReference<PagedResources<Resource<Coffee>>>() {
+                        });
         log.info("Menu Response: {}", coffeeResp.getBody());
     }
 
@@ -67,7 +69,8 @@ public class CustomerRunner implements ApplicationRunner {
                 RequestEntity.post(link.getTemplate().expand()).body(americano);
         ResponseEntity<Resource<Coffee>> resp =
                 restTemplate.exchange(req,
-                        new ParameterizedTypeReference<Resource<Coffee>>() {});
+                        new ParameterizedTypeReference<Resource<Coffee>>() {
+                        });
         log.info("add Coffee Response: {}", resp);
         return resp.getBody();
     }
@@ -81,7 +84,8 @@ public class CustomerRunner implements ApplicationRunner {
                 RequestEntity.post(link.getTemplate().expand()).body(newOrder);
         ResponseEntity<Resource<CoffeeOrder>> resp =
                 restTemplate.exchange(req,
-                        new ParameterizedTypeReference<Resource<CoffeeOrder>>() {});
+                        new ParameterizedTypeReference<Resource<CoffeeOrder>>() {
+                        });
         log.info("add Order Response: {}", resp);
 
         Resource<CoffeeOrder> order = resp.getBody();

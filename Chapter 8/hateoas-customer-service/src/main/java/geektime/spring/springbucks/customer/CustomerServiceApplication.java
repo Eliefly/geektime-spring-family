@@ -22,48 +22,50 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CustomerServiceApplication {
 
-	public static void main(String[] args) {
-		new SpringApplicationBuilder()
-				.sources(CustomerServiceApplication.class)
-				.bannerMode(Banner.Mode.OFF)
-				.web(WebApplicationType.NONE)
-				.run(args);
-	}
+    public static void main(String[] args) {
+        new SpringApplicationBuilder()
+                .sources(CustomerServiceApplication.class)
+                .bannerMode(Banner.Mode.OFF)
+                .web(WebApplicationType.NONE)
+                .run(args);
+    }
 
-	@Bean
-	public Jackson2HalModule jackson2HalModule() {
-		return new Jackson2HalModule();
-	}
+    /**
+     * Jackson JSON 支持
+     *
+     * @return
+     */
+    @Bean
+    public Jackson2HalModule jackson2HalModule() {
+        return new Jackson2HalModule();
+    }
 
-	@Bean
-	public HttpComponentsClientHttpRequestFactory requestFactory() {
-		PoolingHttpClientConnectionManager connectionManager =
-				new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
-		connectionManager.setMaxTotal(200);
-		connectionManager.setDefaultMaxPerRoute(20);
+    @Bean
+    public HttpComponentsClientHttpRequestFactory requestFactory() {
+        PoolingHttpClientConnectionManager connectionManager =
+                new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
+        connectionManager.setMaxTotal(200);
+        connectionManager.setDefaultMaxPerRoute(20);
 
-		CloseableHttpClient httpClient = HttpClients.custom()
-				.setConnectionManager(connectionManager)
-				.evictIdleConnections(30, TimeUnit.SECONDS)
-				.disableAutomaticRetries()
-				// 有 Keep-Alive 认里面的值，没有的话永久有效
-				//.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-				// 换成自定义的
-				.setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
-				.build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .evictIdleConnections(30, TimeUnit.SECONDS)
+                .disableAutomaticRetries()
+                // 有 Keep-Alive 认里面的值，没有的话永久有效
+                //.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
+                // 换成自定义的
+                .setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
+                .build();
 
-		HttpComponentsClientHttpRequestFactory requestFactory =
-				new HttpComponentsClientHttpRequestFactory(httpClient);
+        return new HttpComponentsClientHttpRequestFactory(httpClient);
+    }
 
-		return requestFactory;
-	}
-
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder
-				.setConnectTimeout(Duration.ofMillis(100))
-				.setReadTimeout(Duration.ofMillis(500))
-				.requestFactory(this::requestFactory)
-				.build();
-	}
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder
+                .setConnectTimeout(Duration.ofMillis(100))
+                .setReadTimeout(Duration.ofMillis(500))
+                .requestFactory(this::requestFactory)
+                .build();
+    }
 }
