@@ -13,18 +13,18 @@ import javax.servlet.http.HttpSession;
 @EnableRedisHttpSession
 public class SessionDemoApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SessionDemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SessionDemoApplication.class, args);
+    }
 
-	@RequestMapping("/hello")
-	public String printSession(HttpSession session, String name) {
-		String storedName = (String) session.getAttribute("name");
-		if (storedName == null) {
-			session.setAttribute("name", name);
-			storedName = name;
-		}
-		return "hello " + storedName;
-	}
+    @RequestMapping("/hello")
+    public String printSession(HttpSession session, String name) {
+        String storedName = (String) session.getAttribute("name");
+        if (storedName == null) {
+            session.setAttribute("name", name);
+            storedName = name;
+        }
+        return "hello " + storedName;
+    }
 
 }
