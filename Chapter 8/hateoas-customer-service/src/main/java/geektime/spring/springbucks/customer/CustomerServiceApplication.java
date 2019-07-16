@@ -31,7 +31,7 @@ public class CustomerServiceApplication {
     }
 
     /**
-     * Jackson JSON 支持
+     *  配置 Jackson JSON 支持 HAL
      *
      * @return
      */
