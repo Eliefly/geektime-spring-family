@@ -10,6 +10,8 @@ import org.springframework.util.ClassUtils;
 
 @Slf4j
 public class GreetingBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+
+    @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         boolean hasClass = ClassUtils.isPresent("geektime.spring.hello.greeting.GreetingApplicationRunner",
                 GreetingBeanFactoryPostProcessor.class.getClassLoader());
