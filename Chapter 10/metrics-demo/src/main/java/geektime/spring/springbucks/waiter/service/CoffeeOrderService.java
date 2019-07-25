@@ -53,6 +53,7 @@ public class CoffeeOrderService implements MeterBinder {
 
     @Override
     public void bindTo(MeterRegistry meterRegistry) {
+        // 订单数作为 metric
         this.orderCounter = meterRegistry.counter("order.count");
     }
 }

@@ -11,36 +11,37 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @SpringBootApplication
+// 开启 spring boot amdin server
 @EnableAdminServer
 public class SbaServerApplication extends WebSecurityConfigurerAdapter {
-	@Autowired
-	private AdminServerProperties adminServerProperties;
+    @Autowired
+    private AdminServerProperties adminServerProperties;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SbaServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SbaServerApplication.class, args);
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		String adminContextPath = adminServerProperties.getContextPath();
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        String adminContextPath = adminServerProperties.getContextPath();
 
-		SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-		successHandler.setTargetUrlParameter("redirectTo");
-		successHandler.setDefaultTargetUrl(adminContextPath + "/");
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setTargetUrlParameter("redirectTo");
+        successHandler.setDefaultTargetUrl(adminContextPath + "/");
 
-		http.authorizeRequests()
-				.antMatchers(adminContextPath + "/assets/**").permitAll()
-				.antMatchers(adminContextPath + "/login").permitAll()
-				.anyRequest().authenticated()
-				.and()
-				.formLogin().loginPage(adminContextPath + "/login").successHandler(successHandler).and()
-				.logout().logoutUrl(adminContextPath + "/logout").and()
-				.httpBasic().and()
-				.csrf()
-				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-				.ignoringAntMatchers(
-						adminContextPath + "/instances",
-						adminContextPath + "/actuator/**"
-				);
-	}
+        http.authorizeRequests()
+                .antMatchers(adminContextPath + "/assets/**").permitAll()
+                .antMatchers(adminContextPath + "/login").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().loginPage(adminContextPath + "/login").successHandler(successHandler).and()
+                .logout().logoutUrl(adminContextPath + "/logout").and()
+                .httpBasic().and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringAntMatchers(
+                        adminContextPath + "/instances",
+                        adminContextPath + "/actuator/**"
+                );
+    }
 }

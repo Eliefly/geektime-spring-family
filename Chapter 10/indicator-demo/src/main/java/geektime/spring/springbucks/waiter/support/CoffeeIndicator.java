@@ -8,9 +8,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CoffeeIndicator implements HealthIndicator {
+
     @Autowired
     private CoffeeService coffeeService;
 
+    /**
+     * http://localhost:8080/actuator/health 执行一次检查
+     *
+     * @return
+     */
     @Override
     public Health health() {
         long count = coffeeService.getCoffeeCount();

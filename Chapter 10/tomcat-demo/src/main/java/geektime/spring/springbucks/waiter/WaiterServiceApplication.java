@@ -21,35 +21,35 @@ import java.util.TimeZone;
 @EnableJpaRepositories
 @EnableCaching
 public class WaiterServiceApplication implements WebMvcConfigurer,
-		WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
+        WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
 
-	public static void main(String[] args) {
-		SpringApplication.run(WaiterServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(WaiterServiceApplication.class, args);
+    }
 
-	@Override
-	public void customize(TomcatServletWebServerFactory factory) {
-		Compression compression = new Compression();
-		compression.setEnabled(true);
-		compression.setMinResponseSize(DataSize.ofBytes(512));
-		factory.setCompression(compression);
-	}
+    @Override
+    public void customize(TomcatServletWebServerFactory factory) {
+        Compression compression = new Compression();
+        compression.setEnabled(true);
+        compression.setMinResponseSize(DataSize.ofBytes(512));
+        factory.setCompression(compression);
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new PerformanceInteceptor())
-				.addPathPatterns("/coffee/**").addPathPatterns("/order/**");
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new PerformanceInteceptor())
+                .addPathPatterns("/coffee/**").addPathPatterns("/order/**");
+    }
 
-	@Bean
-	public Hibernate5Module hibernate5Module() {
-		return new Hibernate5Module();
-	}
+    @Bean
+    public Hibernate5Module hibernate5Module() {
+        return new Hibernate5Module();
+    }
 
-	@Bean
-	public Jackson2ObjectMapperBuilderCustomizer jacksonBuilderCustomizer() {
-		return builder ->
-				builder.indentOutput(true)
-						.timeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-	}
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonBuilderCustomizer() {
+        return builder ->
+                builder.indentOutput(true)
+                        .timeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+    }
 }
