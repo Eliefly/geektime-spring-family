@@ -22,6 +22,7 @@ import java.util.List;
 @Component
 @Slf4j
 public class CustomerRunner implements ApplicationRunner {
+
     @Autowired
     private RestTemplate restTemplate;
     @Value("${waiter.service.url}")
@@ -36,7 +37,8 @@ public class CustomerRunner implements ApplicationRunner {
 
     private void readMenu() {
         ParameterizedTypeReference<List<Coffee>> ptr =
-                new ParameterizedTypeReference<List<Coffee>>() {};
+                new ParameterizedTypeReference<List<Coffee>>() {
+                };
         ResponseEntity<List<Coffee>> list = restTemplate
                 .exchange(url + "/coffee/", HttpMethod.GET, null, ptr);
         list.getBody().forEach(c -> log.info("Coffee: {}", c));

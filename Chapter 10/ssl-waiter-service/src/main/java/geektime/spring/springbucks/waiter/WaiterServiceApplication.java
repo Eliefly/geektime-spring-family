@@ -16,28 +16,29 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableJpaRepositories
 @EnableCaching
+// 实现 WebMvcConfigurer 接口对 spring mvc 进行配置
 public class WaiterServiceApplication implements WebMvcConfigurer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(WaiterServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(WaiterServiceApplication.class, args);
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new PerformanceInteceptor())
-				.addPathPatterns("/coffee/**").addPathPatterns("/order/**");
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new PerformanceInteceptor())
+                .addPathPatterns("/coffee/**").addPathPatterns("/order/**");
+    }
 
-	@Bean
-	public Hibernate5Module hibernate5Module() {
-		return new Hibernate5Module();
-	}
+    @Bean
+    public Hibernate5Module hibernate5Module() {
+        return new Hibernate5Module();
+    }
 
-	@Bean
-	public Jackson2ObjectMapperBuilderCustomizer jacksonBuilderCustomizer() {
-		return builder -> {
-			builder.indentOutput(true);
-			builder.timeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-		};
-	}
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonBuilderCustomizer() {
+        return builder -> {
+            builder.indentOutput(true);
+            builder.timeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        };
+    }
 }

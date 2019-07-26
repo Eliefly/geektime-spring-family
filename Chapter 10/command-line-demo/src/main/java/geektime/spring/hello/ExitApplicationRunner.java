@@ -18,9 +18,9 @@ public class ExitApplicationRunner implements ApplicationRunner, ApplicationCont
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        int code = SpringApplication.exit(applicationContext);
-        log.info("Exit with {}.", code);
-        System.exit(code);
+//        int code = SpringApplication.exit(applicationContext);
+//        log.info("Exit with {}.", code);
+//        System.exit(code);
     }
 
     @Override
