@@ -37,8 +37,10 @@ public class CustomerRunner implements ApplicationRunner {
 
     private void showServiceInstances() {
         log.info("DiscoveryClient: {}", discoveryClient.getClass().getName());
+        // DiscoveryClient: org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient
         discoveryClient.getInstances("waiter-service").forEach(s -> {
             log.info("Host: {}, Port: {}", s.getHost(), s.getPort());
+            // Host: windows10.microdone.cn, Port: 62489
         });
     }
 

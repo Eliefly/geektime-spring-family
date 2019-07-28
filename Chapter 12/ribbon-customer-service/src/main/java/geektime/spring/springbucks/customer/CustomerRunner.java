@@ -24,6 +24,10 @@ import java.util.List;
 public class CustomerRunner implements ApplicationRunner {
     @Autowired
     private RestTemplate restTemplate;
+
+    /**
+     * discoveryClient
+     */
     @Autowired
     private DiscoveryClient discoveryClient;
 
@@ -44,7 +48,9 @@ public class CustomerRunner implements ApplicationRunner {
 
     private void readMenu() {
         ParameterizedTypeReference<List<Coffee>> ptr =
-                new ParameterizedTypeReference<List<Coffee>>() {};
+                new ParameterizedTypeReference<List<Coffee>>() {
+                };
+        // restTemplate 直接通过服务名访问服务
         ResponseEntity<List<Coffee>> list = restTemplate
                 .exchange("http://waiter-service/coffee/", HttpMethod.GET, null, ptr);
         list.getBody().forEach(c -> log.info("Coffee: {}", c));
