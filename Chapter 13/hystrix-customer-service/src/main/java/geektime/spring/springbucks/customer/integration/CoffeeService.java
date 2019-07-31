@@ -17,8 +17,8 @@ public interface CoffeeService {
     List<Coffee> getAll();
 
     @GetMapping("/{id}")
-    Coffee getById(@PathVariable Long id);
+    Coffee getById(@PathVariable(name = "id") Long id);
 
     @GetMapping(path = "/", params = "name")
-    Coffee getByName(@RequestParam String name);
+    Coffee getByName(@RequestParam(name = "name") String name);
 }

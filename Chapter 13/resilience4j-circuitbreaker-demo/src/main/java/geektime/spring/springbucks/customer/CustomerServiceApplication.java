@@ -20,19 +20,19 @@ import java.util.concurrent.TimeUnit;
 @EnableAspectJAutoProxy
 public class CustomerServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CustomerServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CustomerServiceApplication.class, args);
+    }
 
-	@Bean
-	public CloseableHttpClient httpClient() {
-		return HttpClients.custom()
-				.setConnectionTimeToLive(30, TimeUnit.SECONDS)
-				.evictIdleConnections(30, TimeUnit.SECONDS)
-				.setMaxConnTotal(200)
-				.setMaxConnPerRoute(20)
-				.disableAutomaticRetries()
-				.setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
-				.build();
-	}
+    @Bean
+    public CloseableHttpClient httpClient() {
+        return HttpClients.custom()
+                .setConnectionTimeToLive(30, TimeUnit.SECONDS)
+                .evictIdleConnections(30, TimeUnit.SECONDS)
+                .setMaxConnTotal(200)
+                .setMaxConnPerRoute(20)
+                .disableAutomaticRetries()
+                .setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
+                .build();
+    }
 }
