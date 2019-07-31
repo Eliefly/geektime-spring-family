@@ -40,19 +40,28 @@ public class CustomerController {
         bulkhead = bulkheadRegistry.bulkhead("menu");
     }
 
+    /**
+     * 方式1：编程方式
+     */
     @GetMapping("/menu")
     public List<Coffee> readMenu() {
         return Try.ofSupplier(
+                // bulkhead 装饰
                 Bulkhead.decorateSupplier(bulkhead,
                         CircuitBreaker.decorateSupplier(circuitBreaker,
                                 () -> coffeeService.getAll())))
                 .recover(CircuitBreakerOpenException.class, Collections.emptyList())
+                // 如果又BulkheadFullException熔断返回
                 .recover(BulkheadFullException.class, Collections.emptyList())
                 .get();
     }
 
+    /**
+     * 方式2：注解方式
+     */
     @PostMapping("/order")
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
+    // 注解
     @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
     public CoffeeOrder createOrder() {
         NewOrderRequest orderRequest = NewOrderRequest.builder()

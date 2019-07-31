@@ -39,7 +39,9 @@ public class CustomerController {
      */
     @GetMapping("/menu")
     public List<Coffee> readMenu() {
+        // Try.ofSupplier 捕获异常处理
         return Try.ofSupplier(
+                // 装饰器
                 CircuitBreaker.decorateSupplier(circuitBreaker,
                         () -> coffeeService.getAll()))
                 .recover(CircuitBreakerOpenException.class, Collections.emptyList())
@@ -47,7 +49,7 @@ public class CustomerController {
     }
 
     /**
-     * 方式2：主节方式
+     * 方式2：注解方式
      */
     @PostMapping("/order")
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
