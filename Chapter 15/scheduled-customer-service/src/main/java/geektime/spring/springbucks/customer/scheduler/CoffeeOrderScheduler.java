@@ -21,6 +21,11 @@ public class CoffeeOrderScheduler {
     private CoffeeOrderService coffeeOrderService;
     private Map<Long, CoffeeOrder> orderMap = new ConcurrentHashMap<>();
 
+    /**
+     * 监听事件
+     *
+     * @param event
+     */
     @EventListener
     public void acceptOrder(OrderWaitingEvent event) {
         orderMap.put(event.getOrder().getId(), event.getOrder());

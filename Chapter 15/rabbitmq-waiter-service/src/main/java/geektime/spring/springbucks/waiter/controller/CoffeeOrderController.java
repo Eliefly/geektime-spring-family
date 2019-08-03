@@ -42,7 +42,7 @@ public class CoffeeOrderController {
         try {
             order = rateLimiter.executeSupplier(() -> orderService.get(id));
             log.info("Get Order: {}", order);
-        } catch(RequestNotPermitted e) {
+        } catch (RequestNotPermitted e) {
             log.warn("Request Not Permitted! {}", e.getMessage());
         }
         return order;
@@ -55,10 +55,17 @@ public class CoffeeOrderController {
     public CoffeeOrder create(@RequestBody NewOrderRequest newOrder) {
         log.info("Receive new Order {}", newOrder);
         Coffee[] coffeeList = coffeeService.getCoffeeByName(newOrder.getItems())
-                .toArray(new Coffee[] {});
+                .toArray(new Coffee[]{});
         return orderService.createOrder(newOrder.getCustomer(), coffeeList);
     }
 
+    /**
+     * 修改订单的state
+     *
+     * @param id
+     * @param orderState
+     * @return
+     */
     @PutMapping("/{id}")
     public CoffeeOrder updateState(@PathVariable("id") Long id,
                                    @RequestBody OrderStateRequest orderState) {

@@ -56,6 +56,11 @@ public class CustomerController {
                 .get();
     }
 
+    /**
+     * customer 下订单
+     *
+     * @return
+     */
     @PostMapping("/order")
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
     @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
@@ -64,8 +69,10 @@ public class CustomerController {
                 .customer(customer)
                 .items(Arrays.asList("capuccino"))
                 .build();
+        // 调用 waiter-service 创建订单
         CoffeeOrder order = coffeeOrderService.create(orderRequest);
         log.info("Create order: {}", order != null ? order.getId() : "-");
+        // 调用 waiter-service 更新订单的状态
         order = coffeeOrderService.updateState(order.getId(),
                 OrderStateRequest.builder().state(OrderState.PAID).build());
         log.info("Order is PAID: {}", order);

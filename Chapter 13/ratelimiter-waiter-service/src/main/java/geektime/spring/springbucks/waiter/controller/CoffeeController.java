@@ -32,6 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/coffee")
+// 方式1：注解方式实现 ratelimiter 限流
 @RateLimiter(name = "coffee")
 @Slf4j
 public class CoffeeController {

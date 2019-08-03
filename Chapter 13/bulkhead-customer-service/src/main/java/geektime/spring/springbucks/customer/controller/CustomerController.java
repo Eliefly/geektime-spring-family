@@ -60,8 +60,9 @@ public class CustomerController {
      * 方式2：注解方式
      */
     @PostMapping("/order")
+    // CircuitBreaker 注解
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
-    // 注解
+    // Bulkhead 注解
     @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
     public CoffeeOrder createOrder() {
         NewOrderRequest orderRequest = NewOrderRequest.builder()

@@ -21,6 +21,7 @@ import java.util.TimeZone;
 @EnableJpaRepositories
 @EnableCaching
 @EnableDiscoveryClient
+// 增加 Customer binding
 @EnableBinding({ Barista.class, Customer.class })
 public class WaiterServiceApplication implements WebMvcConfigurer {
 

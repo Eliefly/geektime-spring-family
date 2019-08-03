@@ -9,7 +9,8 @@ public interface Barista {
     String NEW_ORDERS = "newOrders";
     String FINISHED_ORDERS = "finishedOrders";
 
-    @Input
+    // 需要监听订阅的消息，exchange
+    @Input(value = FINISHED_ORDERS)
     SubscribableChannel finishedOrders();
 
     @Output

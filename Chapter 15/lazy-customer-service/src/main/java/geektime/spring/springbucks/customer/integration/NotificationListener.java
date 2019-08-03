@@ -18,9 +18,11 @@ public class NotificationListener {
     @Value("${customer.name}")
     private String customer;
 
+    // 监听 notifyOrders exchange
     @StreamListener(Waiter.NOTIFY_ORDERS)
     public void takeOrder(@Payload Long id) {
         CoffeeOrder order = orderService.getOrder(id);
+        // 咖啡已经制作完成
         if (OrderState.BREWED == order.getState()) {
             log.info("Order {} is READY, I'll take it.", id);
             orderService.updateState(id,

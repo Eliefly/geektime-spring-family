@@ -70,10 +70,16 @@ public class CustomerController implements ApplicationEventPublisherAware {
         order = coffeeOrderService.updateState(order.getId(),
                 OrderStateRequest.builder().state(OrderState.PAID).build());
         log.info("Order is PAID: {}", order);
+        // 发布事件
         applicationEventPublisher.publishEvent(new OrderWaitingEvent(order));
         return order;
     }
 
+    /**
+     * 注入 ApplicationEventPublisher
+     *
+     * @param applicationEventPublisher
+     */
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;

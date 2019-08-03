@@ -12,6 +12,8 @@ import io.micrometer.core.instrument.binder.MeterBinder;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,10 @@ public class CoffeeOrderService implements MeterBinder {
     @Autowired
     private Barista barista;
 
+    @Autowired
+    @Qualifier(Barista.NEW_ORDERS)
+    MessageChannel newOrdersChannel;
+
     private String waiterId = UUID.randomUUID().toString();
 
     private Counter orderCounter = null;
@@ -43,7 +49,7 @@ public class CoffeeOrderService implements MeterBinder {
         return orderRepository.getOne(id);
     }
 
-    public CoffeeOrder createOrder(String customer, Coffee...coffee) {
+    public CoffeeOrder createOrder(String customer, Coffee... coffee) {
         CoffeeOrder order = CoffeeOrder.builder()
                 .customer(customer)
                 .items(new ArrayList<>(Arrays.asList(coffee)))
@@ -63,6 +69,7 @@ public class CoffeeOrderService implements MeterBinder {
             log.warn("Can not find order.");
             return false;
         }
+        // 状态机比较
         if (state.compareTo(order.getState()) <= 0) {
             log.warn("Wrong State order: {}, {}", state, order.getState());
             return false;
@@ -70,10 +77,17 @@ public class CoffeeOrderService implements MeterBinder {
         order.setState(state);
         orderRepository.save(order);
         log.info("Updated Order: {}", order);
+
+        // 如果是支付消息，即订单被支付
         if (state == OrderState.PAID) {
             // 有返回值，如果要关注发送结果，则判断返回值
             // 一般消息体不会这么简单
-            barista.newOrders().send(MessageBuilder.withPayload(order.getId()).build());
+
+            // 发送消息
+            barista.newOrders() // 获取channel
+                    .send(MessageBuilder.withPayload(order.getId()).build());
+
+//            newOrdersChannel.send(MessageBuilder.withPayload(order.getId()).build());
         }
         return true;
     }
@@ -83,7 +97,7 @@ public class CoffeeOrderService implements MeterBinder {
         this.orderCounter = meterRegistry.counter("order.count");
     }
 
-    private Money calcTotal(Coffee...coffee) {
+    private Money calcTotal(Coffee... coffee) {
         List<Money> items = Stream.of(coffee).map(c -> c.getPrice())
                 .collect(Collectors.toList());
         return Money.total(items).multipliedBy(orderProperties.getDiscount())

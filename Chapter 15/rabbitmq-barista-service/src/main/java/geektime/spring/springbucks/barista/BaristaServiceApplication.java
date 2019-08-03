@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableBinding(Waiter.class)
 public class BaristaServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BaristaServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BaristaServiceApplication.class, args);
+    }
 
 }

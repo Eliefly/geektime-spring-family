@@ -17,14 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Transactional
 public class OrderListener {
+
     @Autowired
     private CoffeeOrderRepository orderRepository;
+
     @Autowired
     @Qualifier(Waiter.FINISHED_ORDERS)
     private MessageChannel finishedOrdersMessageChannel;
+
     @Value("${order.barista-prefix}${random.uuid}")
     private String barista;
 
+    // 监听 newOrders，模拟咖啡师制作咖啡
     @StreamListener(Waiter.NEW_ORDERS)
     public void processNewOrder(Long id) {
         CoffeeOrder o = orderRepository.getOne(id);
@@ -38,6 +42,7 @@ public class OrderListener {
         o.setBarista(barista);
         orderRepository.save(o);
         log.info("Order {} is READY.", id);
+        // 咖啡制作好了，往 waiter 发送消息---> waiter-service 监听 Barista.FINISHED_ORDERS
         finishedOrdersMessageChannel.send(MessageBuilder.withPayload(id).build());
     }
 

@@ -25,6 +25,8 @@ public class OrderListener {
                 .setHeader("customer", order.getCustomer())
                 .build();
         log.info("Notify the customer: {}", order.getCustomer());
+
+        // 订单完成后发出消息到 notifyOrders
         customer.notification().send(message);
     }
 }

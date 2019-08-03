@@ -6,6 +6,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 
 public interface Waiter {
+
     String NEW_ORDERS = "newOrders";
     String FINISHED_ORDERS = "finishedOrders";
 
